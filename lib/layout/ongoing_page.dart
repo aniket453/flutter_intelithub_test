@@ -37,14 +37,21 @@ class _OnGoingPageState extends State<OnGoingPage> {
               const SizedBox(height: 20),
               Image.asset(AppImage.rgImg, height: 400, fit: BoxFit.contain),
               const SizedBox(height: 30),
-              CustomButton(onTap: (){Get.to(const LoginPage());},btnTag: AppString.login),
+              CustomButton(
+                  onTap: () {
+                    Get.to(const LoginPage());
+                  },
+                  btnTag: AppString.login),
               const SizedBox(height: 30),
-              CustomButton(onTap: (){Get.to(const RegistrationPage());},btnTag: AppString.registration)
+              CustomButton(
+                  onTap: () {
+                    Get.to(const RegistrationPage());
+                  },
+                  btnTag: AppString.registration)
             ],
           ),
         ),
       ),
     );
   }
-
 }

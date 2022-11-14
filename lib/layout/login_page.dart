@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_intelihub/helper/custom_button.dart';
-import 'package:flutter_intelihub/helper/text_from_feilds_helper.dart';
+import 'package:flutter_intelihub/helper/text_from_fields_helper.dart';
 import 'package:flutter_intelihub/layout/feed_page.dart';
 import 'package:flutter_intelihub/utils/app_string.dart';
+import 'package:flutter_intelihub/utils/app_utils.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -15,6 +17,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passController = TextEditingController();
+  bool value = false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Column(
                   children: [
-                    TextFormFeildsHelper(
+                    CustomTextFormField(
                         helperText: AppString.name,
                         controller: nameController,
                         validator: (val) {
@@ -42,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
                           return null;
                         }),
                     const SizedBox(height: 16),
-                    TextFormFeildsHelper(
+                    CustomTextFormField(
                         helperText: AppString.password,
                         controller: passController,
                         validator: (val) {
@@ -54,17 +57,44 @@ class _LoginPageState extends State<LoginPage> {
 
                           return null;
                         }),
+                    Row(
+                      children: [
+                        SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: Checkbox(
+                            value: value,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                this.value = value!;
+                              });
+                            },
+                          ),
+                        ),
+                        const Text('remember me'),
+                      ],
+                    ),
                   ],
                 ),
                 const SizedBox(height: 32),
-                CustomButton(onTap: () {
-                  if ((nameController.value != null ||
-                      nameController.text.length > 2) &&
-                      (passController.value != null ||
-                          passController.text.length > 6)){
-                    Get.to(FeedPage());
-                  }
-                }, btnTag: AppString.login)
+                CustomButton(
+                    onTap: () async {
+                      FocusScope.of(context).unfocus();
+
+                      if (nameController.text.trim().length >= 2 &&
+                          passController.text.trim().length >= 6) {
+                        if (value) {
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          prefs.setBool(AppString.isLoggedIn, true);
+                        }
+
+                        Get.offAll(const FeedPage());
+                      } else {
+                        AppUtils.flutterShowToast(
+                            msg: AppString.validateFields);
+                      }
+                    },
+                    btnTag: AppString.login)
               ],
             ),
           ),

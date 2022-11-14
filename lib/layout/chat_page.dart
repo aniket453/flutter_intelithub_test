@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_intelihub/helper/text_from_fields_helper.dart';
+import 'package:flutter_intelihub/utils/app_string.dart';
 
 class ChatItem {
   final String text;
@@ -8,26 +12,32 @@ class ChatItem {
 }
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key}) : super(key: key);
+  final String name;
+
+  const ChatPage({required this.name, Key? key}) : super(key: key);
 
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
+  TextEditingController chatController = TextEditingController();
   List<ChatItem> chatList = [
-    ChatItem(text: 'Hii', isCurrentUser: false),
+    ChatItem(text: 'How was the concert?', isCurrentUser: false),
     ChatItem(
-        text: 'Hello',
+        text: 'Awesome! Next time you gotta come as well!',
         isCurrentUser: true),
-    ChatItem(text: 'How are you?', isCurrentUser: false),
+    ChatItem(text: 'Ok, when is the next date?', isCurrentUser: false),
     ChatItem(
-        text: 'I am good,you?', isCurrentUser: true),
-    ChatItem(text: 'Fine', isCurrentUser: false),
-    ChatItem(
-        text: 'ok, lets go!', isCurrentUser: true),
-    ChatItem(text: 'Where?', isCurrentUser: false),
+        text: 'They\'re playing on the 20th of November', isCurrentUser: true),
+    ChatItem(text: 'Let\'s do it!', isCurrentUser: false),
   ];
+
+  void addChat({required ChatItem item}) {
+    setState(() {
+      chatList.add(item);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,20 +46,61 @@ class _ChatPageState extends State<ChatPage> {
           leading: const BackButton(),
           titleSpacing: 0,
           centerTitle: false,
-          title: const Text('User A',
-              style: TextStyle(
+          title: Text(widget.name,
+              style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
                   color: Colors.white))),
       body: SafeArea(
-        child: ListView.builder(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          itemBuilder: (BuildContext context, int index) {
-            final item = chatList[index];
-            return getChatItemView(item: item);
-          },
-          itemCount: chatList.length,
-          physics: const BouncingScrollPhysics(),
+        child: Column(
+          children: [
+            Expanded(
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    itemBuilder: (BuildContext context, int index) {
+                      final item = chatList[index];
+                      return getChatItemView(item: item);
+                    },
+                    itemCount: chatList.length,
+                    physics: const BouncingScrollPhysics())),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: CustomTextFormField(
+                      onChanged: (val) {
+                        setState(() {});
+                      },
+                      helperText: AppString.writeSomething,
+                      controller: chatController,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  GestureDetector(
+                      onTap: () {
+                        FocusScope.of(context).unfocus();
+                        if (chatController.text.trim().isNotEmpty) {
+                          int num = Random().nextInt(10);
+
+                          addChat(
+                              item: ChatItem(
+                                  text: chatController.text.trim(),
+                                  isCurrentUser: num % 2 == 0));
+                        }
+                      },
+                      child: chatController.text.isNotEmpty
+                          ? const Icon(Icons.send,
+                              size: 24, color: Colors.blueAccent)
+                          : const Icon(Icons.send,
+                              size: 24, color: Colors.grey))
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
         ),
       ),
     );
@@ -63,7 +114,7 @@ class _ChatPageState extends State<ChatPage> {
             isCurrentUser ? 64 : 16, 4, isCurrentUser ? 16 : 64, 4),
         child: Align(
             alignment:
-            isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
+                isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
             child: DecoratedBox(
                 decoration: BoxDecoration(
                     color: isCurrentUser ? Colors.blue : Colors.grey[300],

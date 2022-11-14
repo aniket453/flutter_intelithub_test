@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_intelihub/helper/text_from_feilds_helper.dart';
+import 'package:flutter_intelihub/helper/custom_button.dart';
+import 'package:flutter_intelihub/helper/text_from_fields_helper.dart';
 import 'package:flutter_intelihub/layout/feed_page.dart';
 import 'package:flutter_intelihub/utils/app_string.dart';
 import 'package:flutter_intelihub/utils/app_utils.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 
-import '../helper/custom_button.dart';
-
 RegExp emailRegex = RegExp(
-    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+    r'^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({Key? key}) : super(key: key);
@@ -40,7 +39,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
+              physics: const BouncingScrollPhysics(),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -56,7 +55,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         ),
                       ),
                       const SizedBox(height: 50),
-                      TextFormFeildsHelper(
+                      CustomTextFormField(
                           helperText: AppString.firstName,
                           controller: firstNameController,
                           validator: (val) {
@@ -69,7 +68,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             return null;
                           }),
                       const SizedBox(height: 16),
-                      TextFormFeildsHelper(
+                      CustomTextFormField(
                           helperText: AppString.lastName,
                           controller: lastNameController,
                           validator: (val) {
@@ -82,21 +81,21 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             return null;
                           }),
                       const SizedBox(height: 16),
-                      TextFormFeildsHelper(
+                      CustomTextFormField(
                           helperText: AppString.email,
                           controller: emailController,
                           validator: (val) {
                             if (val?.isEmpty ?? false) {
                               return AppString.emailFeildValidation;
-                            } else if (emailRegex
-                                .hasMatch(emailController.text.trim())) {
+                            } else if (!emailRegex
+                                .hasMatch(val ?? '')) {
                               return AppString.emailLengthValidation;
                             }
 
                             return null;
                           }),
                       const SizedBox(height: 16),
-                      TextFormFeildsHelper(
+                      CustomTextFormField(
                           helperText: AppString.password,
                           controller: passController,
                           validator: (val) {
@@ -113,17 +112,21 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   const SizedBox(height: 32),
                   CustomButton(
                       onTap: () {
+                        FocusScope.of(context).unfocus();
                         final bool emailValid =
-                            emailRegex.hasMatch(emailController.text);
-                        if (firstNameController.text.length > 2 &&
-                            lastNameController.text.length > 2 &&
+                            emailRegex.hasMatch(emailController.text.trim());
+                        if (firstNameController.text.trim().length >= 2 &&
+                            lastNameController.text.trim().length >= 2 &&
                             emailValid &&
-                            passController.text.length > 6) {
-                          Get.to(const FeedPage());
+                            passController.text.trim().length >= 6) {
+                          Get.offAll(const FeedPage());
+                        } else {
+                          AppUtils.flutterShowToast(
+                              msg: AppString.validateFields);
                         }
                       },
                       btnTag: AppString.registration),
-                  SizedBox(height: 20)
+                  const SizedBox(height: 20)
                 ],
               ),
             ),

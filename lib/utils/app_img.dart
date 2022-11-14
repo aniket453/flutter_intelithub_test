@@ -1,5 +1,4 @@
-const String imgUrl = "assets/img";
-
-class AppImage{
-  static const rgImg = "$imgUrl/registration.png";
+class AppImage {
+  static const String imgUrl = 'assets/img';
+  static const rgImg = '$imgUrl/registration.png';
 }

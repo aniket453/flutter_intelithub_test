@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_intelihub/utils/app_color.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'app_color.dart';
-
-class AppUtils{
-  static void flutterShowToast({required String msg})
-  {
+class AppUtils {
+  static void flutterShowToast({required String msg}) {
     Fluttertoast.showToast(
         msg: msg,
         toastLength: Toast.LENGTH_SHORT,
@@ -13,7 +11,6 @@ class AppUtils{
         timeInSecForIosWeb: 2,
         backgroundColor: AppColor.primary,
         textColor: Colors.white,
-        fontSize: 16.0
-    );
+        fontSize: 16.0);
   }
 }
