@@ -147,9 +147,12 @@ class _FeedPageState extends State<FeedPage> {
 
                         if (nameController.text.trim().length >= 2 &&
                             userController.text.trim().length >= 6) {
-                          feedList.add(FeedItem(
+                          feedList.insert(0, FeedItem(
                               name: nameController.text.trim(),
                               userName: userController.text.trim()));
+                          // feedList.add(FeedItem(
+                          //     name: nameController.text.trim(),
+                          //     userName: userController.text.trim()));
                           setState(() {});
                           Navigator.pop(context);
                         } else {
